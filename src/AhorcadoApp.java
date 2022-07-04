@@ -28,6 +28,16 @@ public class AhorcadoApp {
                 JugarTurno(jugador2, jugador1);
             }
         }
+        MostrarGanador(jugador1, jugador2);
+    }
+
+    private static void MostrarGanador(String jugador1, String jugador2) {
+        if(PTS_JUG_1 == 3){
+            System.out.println("Gana " + jugador1);
+        }
+        if(PTS_JUG_2 == 3){
+            System.out.println("Gana " + jugador2);
+        }
     }
 
     public static void JugarTurno(String primero, String segundo){
@@ -37,42 +47,65 @@ public class AhorcadoApp {
 
         System.out.println(primero + " Introduce una palabra.");
         palabra = IntroducirCadena();
-        char[] cadaux = new char[palabra.length()];
-        Arrays.fill(cadaux, '-');
+        char[] cadaux = CrearYRellenarCadena(palabra);
 
-        while(CONT_INTENTOS > 0 && !Arrays.equals(palabra.toCharArray(), cadaux)){
+        while(CONT_INTENTOS > 0 && !SonIguales(palabra, cadaux)){
             System.out.println(segundo + " Introduce una letra.");
             letra = IntroducirCadena();
             encontrada = BuscarLetra(palabra, cadaux, letra);
             if(encontrada){
-                for (int i = 0; i < cadaux.length; i++) {
-                    System.out.print(cadaux[i]);
-                }
-                System.out.println("\n");
-                if(Arrays.equals(palabra.toCharArray(), cadaux)){
-                    System.out.println("Correcto. +1 punto para " + segundo);
-                    if(TURNO % 2 != 0){
-                        PTS_JUG_2++;
-                    }else{
-                        PTS_JUG_1++;
-                    }
-                    TURNO++;
-                }
+                MostrarResultado(cadaux);
+                DarPuntos(segundo, palabra, cadaux);
             }else{
                 CONT_INTENTOS--;
                 System.out.println("Letra incorrecta. Tienes " + CONT_INTENTOS + " intentos.");
-                if(CONT_INTENTOS == 0){
-                    System.out.println("Ahorcado. Punto para " + primero);
-                    if(TURNO % 2 != 0){
-                        PTS_JUG_1++;
-                    }else{
-                        PTS_JUG_2++;
-                    }
-                }
+                DarPuntos(primero, palabra, cadaux);
             }
         }
         CONT_INTENTOS = 6;
 
+    }
+
+    private static void DarPuntos(String jugador, String palabra, char[] cadaux) {
+        if(SonIguales(palabra, cadaux)){
+            System.out.println("Correcto. +1 punto para " + jugador);
+            if(TURNO % 2 != 0){
+                PTS_JUG_2++;
+                System.out.println(jugador + " tiene " + PTS_JUG_2 + " puntos.");
+            }else{
+                PTS_JUG_1++;
+                System.out.println(jugador + " tiene " + PTS_JUG_1 + " puntos.");
+            }
+            TURNO++;
+        }
+
+        if(CONT_INTENTOS == 0){
+            System.out.println("Ahorcado. Punto para " + jugador);
+            if(TURNO % 2 != 0){
+                PTS_JUG_1++;
+                System.out.println(jugador + " tiene " + PTS_JUG_1 + " puntos.");
+            }else{
+                PTS_JUG_2++;
+                System.out.println(jugador + " tiene " + PTS_JUG_2 + " puntos.");
+            }
+        }
+    }
+
+    private static char[] CrearYRellenarCadena(String palabra) {
+        char[] cadaux = new char[palabra.length()];
+        Arrays.fill(cadaux, '-');
+        return cadaux;
+    }
+
+    private static void MostrarResultado(char[] cadaux) {
+        for (int i = 0; i < cadaux.length; i++) {
+            System.out.print(cadaux[i]);
+        }
+        System.out.println("\n");
+    }
+
+    private static boolean SonIguales(String palabra, char[] cadaux) {
+        return Arrays.equals(palabra.toCharArray(), cadaux);
     }
 
     public static Boolean BuscarLetra(String palabra, char[] cadaux, String letra){
